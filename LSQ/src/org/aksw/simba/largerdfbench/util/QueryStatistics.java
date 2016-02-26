@@ -593,11 +593,13 @@ public class QueryStatistics {
        String joinVertexType = "" ;   // {Star, path, hybrid, sink}
 		if(!joinVertices.isEmpty()){
 			
+		int i = 0;
 		for(Vertex jv:joinVertices)
 		{
+			i++;
 			String joinVertex = jv.label;
-			 if(joinVertex.startsWith("http://") || joinVertex.startsWith("ftp://"))
-				 joinVertex =  "lsqrd:q"+(LogRDFizer.queryNo-1)+"-"+joinVertex;
+			 if(joinVertex.startsWith("http://") || joinVertex.startsWith("ftp://") || joinVertex.startsWith("mailto:"))
+				 joinVertex =  "lsqrd:q"+(LogRDFizer.queryNo-1)+"-"+i;
 				 else{
 					 joinVertex =  "lsqrd:q"+(LogRDFizer.queryNo-1)+"-"+joinVertex;
 					 joinVertex = joinVertex.replace("?", "");
@@ -606,7 +608,7 @@ public class QueryStatistics {
 			stats = stats + "\nlsqrd:q"+(LogRDFizer.queryNo-1)+" lsqv:joinVertex " + joinVertex + " . \n";
 			long joinVertexDegree = (jv.inEdges.size() + jv.outEdges.size());
 			joinVertexType =  getJoinVertexType(jv);
-			stats = stats + joinVertex + " lsqv:joinVertexDegree " + joinVertexDegree + " ; lsqv:joinVertexType lsqv:" + joinVertexType + " . " ;
+			stats = stats + joinVertex + " lsqv:joinVertexDegree " + joinVertexDegree + " ; lsqv:joinVertexType lsqv:" + joinVertexType +" ; rdfs:label \""+ jv.label +"\" . " ;
 					
 			//System.out.println("     " + jv+ " Join Vertex Degree: " + joinVertexDegree + ", Join Vertex Type: " + joinVertexType);
 		}

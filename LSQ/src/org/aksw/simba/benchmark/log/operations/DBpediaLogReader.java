@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.aksw.simba.benchmark.Config;
 import org.aksw.simba.benchmark.log.operations.DateConverter.DateParseException;
 import org.aksw.simba.largerdfbench.util.Selectivity;
 import org.openrdf.query.MalformedQueryException;
@@ -44,7 +45,7 @@ public class DBpediaLogReader {
 		String endpoint = args[1];
 		String graph = args[2]; //can be null
 
-		Selectivity.maxRunTime= -1; //query timeout in second. zero or negative means no timout limit
+		Selectivity.maxRunTime= Config.max_run_time; //query timeout in second. zero or negative means no timout limit
 		HashMap<String, Set<String>> queries = getVirtuosoLogQueries(queryLogDir);
 		CleanQueryWriter.writeCleanQueriesWithStats(queries,endpoint,graph, "DBpediaCleanQueries.txt");
 
@@ -139,7 +140,7 @@ public class DBpediaLogReader {
 		for (File queryLogFile : listOfQueryLogs)
 		{
 			System.out.println(queryLogFile.getName()+ ": in progress...");
-			BufferedReader br = new BufferedReader(new FileReader(queryLogDir+queryLogFile.getName()));
+			BufferedReader br = new BufferedReader(new FileReader(queryLogFile.getAbsolutePath()));
 			String line;
 			while ((line = br.readLine()) != null)
 			{	
@@ -150,13 +151,13 @@ public class DBpediaLogReader {
 					totalLogQueries++;
 					queryStr = getQuery(line);
 					//	System.out.println(queryStr);
-					queryStr = queryStr.replace("\"", "'");
-					queryStr = queryStr.replaceAll("\n", " ").replace("\r", "");
+					//queryStr = queryStr.replace("\"", "'");
+					//queryStr = queryStr.replaceAll("\n", " ").replace("\r", "");
 					//String [] prts = line.split(" \"R\"");
 					String [] prts = line.split(" ");
 					//String submission = prts[0];
 					//String [] submissionPrts = submission.split(" ");
-					String dateTime = prts[1]+":"+prts[2]+prts[3];
+					String dateTime = prts[3]+":"+prts[4]+prts[5];
 					//System.out.println(dateTime);
 					 dateTime =dateTime.replace("[", "").replace("]","");
 					dateTime = DateConverter.convertDate(dateTime);
@@ -203,8 +204,8 @@ public class DBpediaLogReader {
 		String parts[] = line.split("query=");
 		String query = parts[1];
 		//System.out.println(query);
-		//		String [] parts  = query.split("&results=");
-		//		query = parts[0];
+		  parts  = query.split("&results=");
+		query = parts[0];
 		parts  = query.split("&format=");
 		query = parts[0];
 		parts  = query.split("&timeout=");

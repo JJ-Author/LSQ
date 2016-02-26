@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.aksw.simba.benchmark.Config;
 import org.aksw.simba.largerdfbench.util.QueryStatistics;
 import org.aksw.simba.largerdfbench.util.Selectivity;
 import org.openrdf.query.MalformedQueryException;
@@ -182,7 +183,7 @@ public class CleanQueryWriter {
 		resultSize = Selectivity.getQueryResultSize(query, endpoint,"describe");
 		long exeTime = System.currentTimeMillis() - curTime ;
 		//System.out.println(resultSize);
-		if (resultSize>0)
+		if (resultSize>=Config.min_result_size)
 		{
 
 			try {
@@ -221,7 +222,7 @@ public class CleanQueryWriter {
 		long curTime = System.currentTimeMillis();
 		resultSize = Selectivity.getQueryResultSize(query, endpoint,"ask");
 		long exeTime = System.currentTimeMillis() - curTime ;
-		if (resultSize==1)
+		if (resultSize>=Config.min_result_size)
 		{
 			try {
 
@@ -259,7 +260,7 @@ public class CleanQueryWriter {
 		long curTime = System.currentTimeMillis();
 		resultSize = Selectivity.getQueryResultSize(query, endpoint,"construct");
 		long exeTime = System.currentTimeMillis() - curTime ;
-		if (resultSize>0)
+		if (resultSize>=Config.min_result_size)
 		{
 
 			try {
@@ -299,7 +300,7 @@ public class CleanQueryWriter {
 		resultSize = Selectivity.getQueryResultSize(query, endpoint,"select");
 		long exeTime = System.currentTimeMillis() - curTime ;
 		//System.out.println(query);
-		if (resultSize>0)
+		if (resultSize>=Config.min_result_size)
 		{
 
 			try {
