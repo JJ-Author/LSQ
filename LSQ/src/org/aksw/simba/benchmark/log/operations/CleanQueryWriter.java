@@ -28,10 +28,10 @@ public class CleanQueryWriter {
 	public static BufferedWriter	bw;
 	public static long datasetSize = 0;
 	public static void main(String[] args) throws RepositoryException, MalformedQueryException, QueryEvaluationException, IOException {
-		String endpoint = "http://localhost:8890/sparql";
-		String graph = "http://aksw.org/feasible"; //can be null
-		Selectivity.maxRunTime= -1;
-		writeCleanQueriesFromQueryFiles("dbpedia-unique-queries.txt", endpoint, graph, "DBpedia3.5.1-CleanQueries-ask.txt");
+		String endpoint = Config.endpoint;
+		String graph = Config.graph; //can be null
+		Selectivity.maxRunTime = Config.max_run_time;
+		writeCleanQueriesFromQueryFiles("dbpedia-unique-queries.txt", endpoint, graph, "DBpedia-CleanQueries.txt");
 
 	}
 	/**
@@ -102,7 +102,7 @@ public class CleanQueryWriter {
 		try{
 			query  = java.net.URLEncoder.encode(query, "UTF-8");
 		}
-		catch (Exception e) {//System.err.println(query+ " "+ e.getMessage());
+		catch (Exception e) {System.err.println("Query URL-encoding error '"+e.getMessage()+"'for query: '"+query);
 		}
 
 		return query+"\n";
@@ -147,7 +147,7 @@ public class CleanQueryWriter {
 		bw.close();
 		br.close();
 		Selectivity.toBW.close();
-		System.out.println("Query with stats successfully writen to "+outputQueryFile+"\nTotal queries with runtime error: " + errorCount);
+		System.out.println("Query with stats successfully written to "+outputQueryFile+"\nTotal queries with runtime error: " + errorCount);
 		System.out.println("Total queries with zero results: "+zeroCount+"\nNote: Zero result queries are not considered");
 		System.out.println("Total Queries with timeOuts: " + timeOutCount +"\nTime out queries are written to timeOutQueries.txt");
 		File file = new File("dummyQueries.txt");
@@ -162,11 +162,12 @@ public class CleanQueryWriter {
 		try{
 			query  = java.net.URLDecoder.decode(query, "UTF-8");
 		}
-		catch (Exception e) {//System.err.println(query+ " "+ e.getMessage());
+		catch (Exception e) {System.err.println("Query URL-decoding error '"+e.getMessage()+"'for query: '"+query);
 		}
 
 		return query+"\n";
 	}
+	
 	/**
 	 * Wrtie DESCRIBE queries in to file
 	 * @param query SPARQL DESCRIBE query

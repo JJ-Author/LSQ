@@ -41,9 +41,9 @@ public class DBpediaLogReader {
 		//		String endpoint = "http://localhost:8890/sparql";
 		//		String graph = "http://aksw.org/feasible"; //can be null
 		//		
-		String queryLogDir = args[0];
-		String endpoint = args[1];
-		String graph = args[2]; //can be null
+		String queryLogDir = Config.queryLogDir;
+		String endpoint = Config.endpoint;
+		String graph = Config.graph; //can be null
 
 		Selectivity.maxRunTime= Config.max_run_time; //query timeout in second. zero or negative means no timout limit
 		HashMap<String, Set<String>> queries = getVirtuosoLogQueries(queryLogDir);
@@ -71,7 +71,7 @@ public class DBpediaLogReader {
 		for (File queryLogFile : listOfQueryLogs)
 		{
 			System.out.println(queryLogFile.getName()+ ": in progress...");
-			BufferedReader br = new BufferedReader(new FileReader(queryLogDir+queryLogFile.getName()));
+			BufferedReader br = new BufferedReader(new FileReader(queryLogFile.getAbsolutePath()));
 			String line;
 			while ((line = br.readLine()) != null)
 			{	
@@ -82,7 +82,7 @@ public class DBpediaLogReader {
 					String queryStr = getQuery(line); 
 					//System.out.println(queryStr);
 					try{
-						Query query = QueryFactory.create(queryStr);
+						Query query = QueryFactory.create(org.aksw.simba.dataset.lsq.LogRDFizer.rewriteQuery(queryStr));
 						query = removeNamedGraphs(query);
 						if(query.isDescribeType())
 						{

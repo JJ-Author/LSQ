@@ -143,7 +143,12 @@ public class LogRDFizer {
 				/*query modifications to get not too much parse errors*/
 				String querySub = rewriteQuery(queryStr);
 				
+				String querySubttl = querySub.replace("\\", "\\\\"); //escape query to embed in turtle literal
+				querySubttl = querySubttl.replace("\"", "\\\""); //escape query to embed in turtle literal
+				bw.write(" lsqv:rewrittenQuery \""+querySubttl+"\" ; \n");
+				
 				query = QueryFactory.create(querySub);
+
 			}
 			catch (Exception ex){
 				String parseError = ex.getMessage().toString().replace("\"", "'").replaceAll("\n", " ").replace("\r", "");
@@ -153,13 +158,13 @@ public class LogRDFizer {
 				parseErrorCount++;}
 			try{
 				if(query.isDescribeType())
-					this.RDFizeDescribe(query,localEndpoint,graph,queryToSubmissions.get(queryStr),separator);
+					this.RDFizeDescribe(query,queryStr,localEndpoint,graph,queryToSubmissions.get(queryStr),separator);
 				else if (query.isSelectType())
-					this.RDFizeSelect(query,localEndpoint,graph,queryToSubmissions.get(queryStr),separator);
+					this.RDFizeSelect(query,queryStr,localEndpoint,graph,queryToSubmissions.get(queryStr),separator);
 				else if (query.isAskType())
-					this.RDFizeASK(query,localEndpoint,graph,queryToSubmissions.get(queryStr),separator);
+					this.RDFizeASK(query,queryStr,localEndpoint,graph,queryToSubmissions.get(queryStr),separator);
 				else if (query.isConstructType())
-					this.RDFizeConstruct(query,localEndpoint,graph,queryToSubmissions.get(queryStr),separator);
+					this.RDFizeConstruct(query,queryStr,localEndpoint,graph,queryToSubmissions.get(queryStr),separator);
 			}
 			catch(Exception ex){}
 		}
@@ -181,12 +186,12 @@ public class LogRDFizer {
 	 * @throws ParseException 
 	 * @throws QueryEvaluationException 
 	 */
-	public void RDFizeSelect(Query query, String localEndpoint, String graph, Set<String> submissions, String separator) throws IOException, RepositoryException, MalformedQueryException, ParseException, QueryEvaluationException {
+	public void RDFizeSelect(Query query,String orig_query, String localEndpoint, String graph, Set<String> submissions, String separator) throws IOException, RepositoryException, MalformedQueryException, ParseException, QueryEvaluationException {
 		String queryStats ="";
 		long curTime = System.currentTimeMillis();
 		try {
 			Query queryNew = SesameLogReader.removeNamedGraphs(query);
-			long resultSize = this.getQueryResultSize(queryNew.toString(), localEndpoint,"select");
+			long resultSize = this.getQueryResultSize(queryNew.toString(),orig_query, localEndpoint,"select");
 			long exeTime = System.currentTimeMillis() - curTime ;
 			//queryStats =queryStats+" lsqv:queryType \"SELECT\" ; " ;
 			//queryStats =queryStats+" lsqv:hasFeatures lsqrd:f-q"+(queryNo-1)+" . \n " ;
@@ -220,12 +225,12 @@ public class LogRDFizer {
 	 * @throws ParseException 
 	 * @throws QueryEvaluationException 
 	 */
-	public void RDFizeDescribe(Query query, String localEndpoint, String graph, Set<String> submissions, String separator) throws IOException, RepositoryException, MalformedQueryException, ParseException, QueryEvaluationException {
+	public void RDFizeDescribe(Query query, String orig_query,String localEndpoint, String graph, Set<String> submissions, String separator) throws IOException, RepositoryException, MalformedQueryException, ParseException, QueryEvaluationException {
 		String queryStats ="";
 		long curTime = System.currentTimeMillis();
 		try {
 			Query queryNew = SesameLogReader.removeNamedGraphs(query);
-			long resultSize = this.getQueryResultSize(queryNew.toString(), localEndpoint,"describe");
+			long resultSize = this.getQueryResultSize(queryNew.toString(),orig_query, localEndpoint,"describe");
 			long exeTime = System.currentTimeMillis() - curTime ;
 			//queryStats =queryStats+" lsqv:queryType \"DESCRIBE\" ; " ;
 			//queryStats =queryStats+" lsqv:hasFeatures lsqrd:f-q"+(queryNo-1)+" . \n" ;
@@ -259,12 +264,12 @@ public class LogRDFizer {
 	 * @throws ParseException 
 	 * @throws QueryEvaluationException 
 	 */
-	public void RDFizeConstruct(Query query, String localEndpoint, String graph, Set<String> submissions, String separator) throws IOException, RepositoryException, MalformedQueryException, ParseException, QueryEvaluationException {
+	public void RDFizeConstruct(Query query, String orig_query,String localEndpoint, String graph, Set<String> submissions, String separator) throws IOException, RepositoryException, MalformedQueryException, ParseException, QueryEvaluationException {
 		String queryStats ="";
 		long curTime = System.currentTimeMillis();
 		try {
 			Query queryNew = SesameLogReader.removeNamedGraphs(query);
-			long resultSize = this.getQueryResultSize(queryNew.toString(), localEndpoint,"construct");
+			long resultSize = this.getQueryResultSize(queryNew.toString(),orig_query, localEndpoint,"construct");
 			long exeTime = System.currentTimeMillis() - curTime ;
 			//queryStats =queryStats+" lsqv:queryType \"CONSTRUCT\" ; " ;
 			//queryStats =queryStats+" lsqv:hasFeatures lsqrd:f-q"+(queryNo-1)+" . \n " ;
@@ -298,12 +303,12 @@ public class LogRDFizer {
 	 * @throws ParseException 
 	 * @throws QueryEvaluationException 
 	 */
-	public void RDFizeASK(Query query, String localEndpoint, String graph, Set<String> submissions, String separator) throws IOException, RepositoryException, MalformedQueryException, ParseException, QueryEvaluationException {
+	public void RDFizeASK(Query query, String orig_query,String localEndpoint, String graph, Set<String> submissions, String separator) throws IOException, RepositoryException, MalformedQueryException, ParseException, QueryEvaluationException {
 		String queryStats ="";
 		long curTime = System.currentTimeMillis();
 		try {
 			Query queryNew = SesameLogReader.removeNamedGraphs(query);
-			long resultSize = this.getQueryResultSize(queryNew.toString(), localEndpoint,"ask");
+			long resultSize = this.getQueryResultSize(queryNew.toString(),orig_query, localEndpoint,"ask");
 			long exeTime = System.currentTimeMillis() - curTime ;
 			//queryStats =queryStats+" lsqv:queryType \"ASK\" ; " ;
 			//queryStats =queryStats+" lsqv:hasFeatures lsqrd:f-q"+(queryNo-1)+" . \n " ;
@@ -416,7 +421,7 @@ public class LogRDFizer {
 	 * @throws MalformedQueryException
 	 * @throws IOException
 	 */
-	public long getQueryResultSize(String queryStr, String localEndpoint,String sesameQueryType) throws RepositoryException, MalformedQueryException, IOException
+	public long getQueryResultSize(String queryStr,String orig_query, String localEndpoint,String sesameQueryType) throws RepositoryException, MalformedQueryException, IOException
 	{
 		long totalSize = -1;
 		this.initializeRepoConnection(localEndpoint);
@@ -460,7 +465,7 @@ public class LogRDFizer {
 		else
 		{
 			try {
-				GraphQuery gq = con.prepareGraphQuery(QueryLanguage.SPARQL, queryStr);
+				GraphQuery gq = con.prepareGraphQuery(QueryLanguage.SPARQL, orig_query);
 				gq.setMaxQueryTime(maxRunTime);
 				GraphQueryResult graphResult = gq.evaluate();
 				totalSize = 0;
