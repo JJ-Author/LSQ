@@ -130,7 +130,7 @@ public class LogRDFizer {
 		this.writePrefixes(acronym);
 	  for(String queryStr: queryToSubmissions.keySet())
 		{
-		    System.out.println(queryNo+" Started...");
+		    System.out.print("\r"+queryNo+" Started... -- "+queryNo/(queryToSubmissions.size()*100.0)+" % ");
 			//bw.write("\nlsqv:LinkedSQL  lsqv:hasLogOf    lsqrd:q-"+queryNo+ " . \n");
 			bw.write("lsqrd:q"+queryNo+ " lsqv:endpoint <" + publicEndpoint + "> ; \n");
 			String ttlqueryStr = queryStr.replace("\\", "\\\\"); //escape query to embed in turtle literal

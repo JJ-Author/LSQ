@@ -53,7 +53,7 @@ public class Config {
 		public static String queryLogDir = "/home/johannes/Desktop/Master/feasible/querylogs"; 
 		public static String endpoint = "http://localhost:8890/sparql";//"http://localhost:9999/blazegraph/namespace/kb/sparql";
 		public static String graph = null;//"http://aksw.org/feasible"; //can be null
-		public static int min_result_size = 0; //can be zero
+		public static int min_result_size = 1; //can be zero
 		public static int max_run_time = -1; //in seconds (negative unlimited)
 
 }

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="LSQ">
+    <property environment="env"/>
+    <property name="ECLIPSE_HOME" value="../../../eclipse/"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.7"/>
+    <property name="source" value="1.7"/>
+    <path id="LSQ.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="lib/commons-codec-1.4.jar"/>
+        <pathelement location="lib/commons-compress-1.1.jar"/>
+        <pathelement location="lib/commons-httpclient-3.1.jar"/>
+        <pathelement location="lib/commons-io-2.4.jar"/>
+        <pathelement location="lib/commons-logging-1.1.1.jar"/>
+        <pathelement location="lib/fedx-2.0.jar"/>
+        <pathelement location="lib/jackson-core-2.1.4.jar"/>
+        <pathelement location="lib/jena-arq-2.11.0.jar"/>
+        <pathelement location="lib/jena-core-2.11.0.jar"/>
+        <pathelement location="lib/jena-iri-0.9.5.jar"/>
+        <pathelement location="lib/log4j-1.2.16.jar"/>
+        <pathelement location="lib/org.apache.commons.io.jar"/>
+        <pathelement location="lib/slf4j-api-1.6.4.jar"/>
+        <pathelement location="lib/slf4j-log4j12-1.6.4.jar"/>
+        <pathelement location="lib/spin-1.4.0.jar"/>
+        <pathelement location="lib/sun.misc.BASE64Decoder.jar"/>
+        <pathelement location="lib/xercesImpl-2.10.0.jar"/>
+        <pathelement location="lib/xml-apis-1.4.01.jar"/>
+        <pathelement location="lib/openrdf-sesame-2.7.13-onejar.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="LSQ.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="DBpediaLogReader">
+        <java classname="org.aksw.simba.benchmark.log.operations.DBpediaLogReader" failonerror="true" fork="yes">
+            <classpath refid="LSQ.classpath"/>
+        </java>
+    </target>
+    <target name="LogRDFizer">
+        <java classname="org.aksw.simba.dataset.lsq.LogRDFizer" failonerror="true" fork="yes">
+            <classpath refid="LSQ.classpath"/>
+        </java>
+    </target>
+    <target name="Config">
+        <java classname="org.aksw.simba.benchmark.Config" failonerror="true" fork="yes">
+            <classpath refid="LSQ.classpath"/>
+        </java>
+    </target>
+    <target name="CleanQueryWriter">
+        <java classname="org.aksw.simba.benchmark.log.operations.CleanQueryWriter" failonerror="true" fork="yes">
+            <classpath refid="LSQ.classpath"/>
+        </java>
+    </target>
+    <target name="AvgStats">
+        <java classname="org.aksw.simba.benchmark.comparisons.AvgStats" failonerror="true" fork="yes">
+            <classpath refid="LSQ.classpath"/>
+        </java>
+    </target>
+</project>

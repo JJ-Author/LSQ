@@ -137,18 +137,21 @@ public class DBpediaLogReader {
 		File[] listOfQueryLogs = dir.listFiles();
 		String queryStr = "";
 		System.out.println("Log parsing started for duplicates...");
+		int f=0;
 		for (File queryLogFile : listOfQueryLogs)
 		{
+			f++;
 			System.out.println(queryLogFile.getName()+ ": in progress...");
 			BufferedReader br = new BufferedReader(new FileReader(queryLogFile.getAbsolutePath()));
 			String line;
 			while ((line = br.readLine()) != null)
 			{	
-				System.out.println(line);
+				//System.out.println(line);
 				if(line.contains("query="))
 				{
 
 					totalLogQueries++;
+					System.out.print("\rread query #"+totalLogQueries+" of file "+queryLogFile.getName()+" "+f+"/"+listOfQueryLogs.length);
 					queryStr = getQuery(line);
 					//	System.out.println(queryStr);
 					//queryStr = queryStr.replace("\"", "'");

@@ -521,7 +521,7 @@ public class AvgStats {
 		System.out.println("Total: "+queries.size());
 		for(String query:queries)
 		{
-			System.out.println(count+": Started...");
+			System.out.println("\r"+count+": Started...");
 			count++;
 			Query jenaQuery = QueryFactory.create(query);
 			if(jenaQuery.isSelectType())

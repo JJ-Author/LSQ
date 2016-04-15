@@ -222,7 +222,7 @@ private static void writeCleanDbpediaBenchQueries(String query, String endpoint,
 			queryStats = queryStats+"Query String: "+java.net.URLEncoder.encode(query, "UTF-8")+"\n";
 			//System.out.println(queryStats);
 			bwd.write(queryStats);
-			System.out.println(dbq+ ": written...");
+			System.out.print("\r"+dbq+ ": written...");
 			dbq++;
 			} catch (Exception e) {	 }  
 	}
