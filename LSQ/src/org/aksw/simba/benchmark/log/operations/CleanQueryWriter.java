@@ -129,6 +129,7 @@ public class CleanQueryWriter {
 		BufferedReader br = new BufferedReader(new FileReader(new File("dummyQueries.txt")));
 		String line = "";
 		//br.readLine();
+		int i = 0;
 		while ((line = br.readLine()) != null && !line.equals("#--end---"))
 		{
 			String prts [] = line.split("\t");
@@ -196,7 +197,7 @@ public class CleanQueryWriter {
 				queryStats = queryStats+"Query String: "+java.net.URLEncoder.encode(query, "UTF-8")+"\n";
 				//System.out.println(queryStats);
 				bw.write(queryStats);
-				System.out.println(count+ ": written...");
+				//System.out.println(count+ ": written..."); //WO
 				count++;
 			} catch (Exception e) {	errorCount++; }  
 		}
@@ -235,7 +236,7 @@ public class CleanQueryWriter {
 				queryStats = queryStats+"Query String: "+java.net.URLEncoder.encode(query, "UTF-8")+"\n";
 				//System.out.println(queryStats);
 				bw.write(queryStats);
-				System.out.println(count+ ": writing...");
+				//System.out.print("\r"+count+ ": writing...");
 				count++;
 			} catch (Exception e) {	errorCount++; }  
 		} 	
@@ -273,7 +274,7 @@ public class CleanQueryWriter {
 				queryStats = queryStats+"Query String: "+java.net.URLEncoder.encode(query, "UTF-8")+"\n";
 				//System.out.println(queryStats);
 				bw.write(queryStats);
-				System.out.println(count+ ": written...");
+				//System.out.println(count+ ": written...");//WO
 				count++;
 			} catch (Exception e) {	errorCount++; }  
 		}
@@ -313,7 +314,7 @@ public class CleanQueryWriter {
 				queryStats = queryStats+"Query String: "+java.net.URLEncoder.encode(query, "UTF-8")+"\n";
 				//System.out.println(queryStats);
 				bw.write(queryStats);
-				System.out.println(count+ ": written...");
+				//System.out.println(count+ ": written...");WO
 				count++;
 			} catch (Exception e) {	errorCount++; }  
 		}

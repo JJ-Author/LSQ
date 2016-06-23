@@ -5,7 +5,6 @@
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. --><project basedir="." default="build" name="LSQ">
     <property environment="env"/>
-    <property name="ECLIPSE_HOME" value="../../../eclipse/"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.7"/>
     <property name="source" value="1.7"/>
@@ -53,18 +52,10 @@
         </javac>
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
-    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
-        <copy todir="${ant.library.dir}">
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </copy>
-        <unzip dest="${ant.library.dir}">
-            <patternset includes="jdtCompilerAdapter.jar"/>
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </unzip>
-    </target>
-    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
-        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-        <antcall target="build"/>
+    <target name="CleanQueryWriter">
+        <java classname="org.aksw.simba.benchmark.log.operations.CleanQueryWriter" failonerror="true" fork="yes">
+            <classpath refid="LSQ.classpath"/>
+        </java>
     </target>
     <target name="DBpediaLogReader">
         <java classname="org.aksw.simba.benchmark.log.operations.DBpediaLogReader" failonerror="true" fork="yes">
@@ -76,18 +67,13 @@
             <classpath refid="LSQ.classpath"/>
         </java>
     </target>
-    <target name="Config">
-        <java classname="org.aksw.simba.benchmark.Config" failonerror="true" fork="yes">
-            <classpath refid="LSQ.classpath"/>
-        </java>
-    </target>
-    <target name="CleanQueryWriter">
-        <java classname="org.aksw.simba.benchmark.log.operations.CleanQueryWriter" failonerror="true" fork="yes">
-            <classpath refid="LSQ.classpath"/>
-        </java>
-    </target>
     <target name="AvgStats">
         <java classname="org.aksw.simba.benchmark.comparisons.AvgStats" failonerror="true" fork="yes">
+            <classpath refid="LSQ.classpath"/>
+        </java>
+    </target>
+    <target name="Config">
+        <java classname="org.aksw.simba.benchmark.Config" failonerror="true" fork="yes">
             <classpath refid="LSQ.classpath"/>
         </java>
     </target>
