@@ -9,10 +9,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.aksw.simba.benchmark.Config;
 import org.aksw.simba.benchmark.log.operations.DateConverter.DateParseException;
 import org.aksw.simba.largerdfbench.util.Selectivity;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import org.mapdb.Serializer;
+import org.mapdb.serializer.SerializerCompressionWrapper;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.repository.RepositoryException;
@@ -61,10 +66,29 @@ public class DBpediaLogReader {
 		HashMap<String, Set<String>> queries = new HashMap<String, Set<String>>();
 		long totalLogQueries = 0 ;
 		long parseErrorCount =0;
-		Set<String> selectQueries = new HashSet<String> ();
-		Set<String> constructQueries = new HashSet<String> ();
-		Set<String> askQueries = new HashSet<String> ();
-		Set<String> describeQueries = new HashSet<String> ();
+		
+		DB db = DBMaker
+				.memoryDirectDB() 							//see http://www.mapdb.org/doc/performance/?highlight=performance#in-memory-mode
+				.allocateStartSize(10 * 1024*1024*1024)
+				.allocateIncrement(512 * 1024*1024) 		// see http://www.mapdb.org/doc/performance/?highlight=performance#allocation-options
+				.make();
+		Set<String> selectQueries = db.hashSet("selectQueries")
+				.serializer(new SerializerCompressionWrapper<String>(Serializer.STRING)) 	// see http://www.mapdb.org/doc/htreemap/#serializers
+				.layout(8, 32, 4) 															//see http://www.mapdb.org/doc/htreemap/#layout
+				.create();
+		Set<String> constructQueries = db.hashSet("constructQueries")
+				.serializer(new SerializerCompressionWrapper<String>(Serializer.STRING)) 	// see http://www.mapdb.org/doc/htreemap/#serializers
+				.layout(8, 32, 4) 															//see http://www.mapdb.org/doc/htreemap/#layout
+				.create();
+		Set<String> askQueries = db.hashSet("askQueries")
+				.serializer(new SerializerCompressionWrapper<String>(Serializer.STRING)) 	// see http://www.mapdb.org/doc/htreemap/#serializers
+				.layout(8, 32, 4) 															//see http://www.mapdb.org/doc/htreemap/#layout
+				.create();
+		Set<String> describeQueries = db.hashSet("describeQueries")
+				.serializer(new SerializerCompressionWrapper<String>(Serializer.STRING)) 	// see http://www.mapdb.org/doc/htreemap/#serializers
+				.layout(8, 32, 4) 															//see http://www.mapdb.org/doc/htreemap/#layout
+				.create();
+		
 		File dir = new File(queryLogDir);
 		File[] listOfQueryLogs = dir.listFiles();
 		System.out.println("Query Log Parsing in progress...");
@@ -75,7 +99,7 @@ public class DBpediaLogReader {
 			String line;
 			while ((line = br.readLine()) != null)
 			{	
-				//System.out.println(line);
+				//System.out.println(line);du
 				if(line.contains("query="))
 				{
 					totalLogQueries++;
